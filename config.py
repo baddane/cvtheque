@@ -1,13 +1,28 @@
 """
 Configuration centralisée - cvtheque
 Modifie uniquement ce fichier pour adapter le projet à ta machine.
+
+Les valeurs sensibles (connexion Supabase) sont lues depuis l'environnement
+si présentes, ce qui permet de basculer entre une base PostgreSQL locale
+(Docker) et une base Supabase hébergée sans toucher au code. Un fichier
+`.env` à la racine est chargé automatiquement (voir `.env.example`).
 """
 import os
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:  # python-dotenv est optionnel
+    pass
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 CONFIG = {
     # --- Base de données ---
+    # Si DATABASE_URL est défini (ex: chaîne de connexion Supabase), il est
+    # utilisé en priorité par db.get_connection(). Sinon on retombe sur la
+    # base locale décrite dans "DB" ci-dessous.
+    "DATABASE_URL": os.getenv("DATABASE_URL", ""),
     "DB": {
         "host": "localhost",
         "port": 5432,
@@ -15,6 +30,13 @@ CONFIG = {
         "user": "cvtheque",
         "password": "cvtheque_pwd_change_moi",
     },
+
+    # --- Supabase Storage (upload des fichiers CV lors de l'ingestion) ---
+    # Renseigne ces 2 variables (dans .env) pour envoyer les fichiers vers le
+    # bucket "cvs". Laisse vide pour un fonctionnement 100% local sans upload.
+    "SUPABASE_URL": os.getenv("SUPABASE_URL", ""),
+    "SUPABASE_SERVICE_KEY": os.getenv("SUPABASE_SERVICE_ROLE_KEY", ""),
+    "SUPABASE_BUCKET": os.getenv("SUPABASE_BUCKET", "cvs"),
 
     # --- Dossiers ---
     "DOSSIER_CV": os.path.join(BASE_DIR, "cv_a_traiter"),     # dépose les nouveaux CV ici

@@ -7,6 +7,14 @@ from config import CONFIG
 
 
 def get_connection():
+    """Connexion PostgreSQL.
+
+    Utilise CONFIG["DATABASE_URL"] (ex: chaîne Supabase) si elle est définie,
+    sinon la base locale de CONFIG["DB"] (Docker).
+    """
+    database_url = CONFIG.get("DATABASE_URL")
+    if database_url:
+        return psycopg2.connect(database_url)
     return psycopg2.connect(**CONFIG["DB"])
 
 
@@ -14,15 +22,16 @@ def inserer_cv(conn, data: dict) -> int:
     """Insère un CV. En cas de conflit sur filepath (déjà importé), met à jour."""
     sql = """
         INSERT INTO cvs (
-            filename, filepath, file_type, raw_text,
+            filename, filepath, storage_path, file_type, raw_text,
             nom_prenom, email, telephone, ville, adresse,
             diplomes, competences, experiences, statut_parsing
         ) VALUES (
-            %(filename)s, %(filepath)s, %(file_type)s, %(raw_text)s,
+            %(filename)s, %(filepath)s, %(storage_path)s, %(file_type)s, %(raw_text)s,
             %(nom_prenom)s, %(email)s, %(telephone)s, %(ville)s, %(adresse)s,
             %(diplomes)s, %(competences)s, %(experiences)s, %(statut_parsing)s
         )
         ON CONFLICT (filepath) DO UPDATE SET
+            storage_path = EXCLUDED.storage_path,
             raw_text = EXCLUDED.raw_text,
             nom_prenom = EXCLUDED.nom_prenom,
             email = EXCLUDED.email,
@@ -36,6 +45,7 @@ def inserer_cv(conn, data: dict) -> int:
         RETURNING id;
     """
     data = dict(data)
+    data.setdefault("storage_path", None)
     data["experiences"] = json.dumps(data.get("experiences", []), ensure_ascii=False)
 
     with conn.cursor() as cur:

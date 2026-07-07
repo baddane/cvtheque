@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS cvs (
     id              SERIAL PRIMARY KEY,
     filename        TEXT NOT NULL,
     filepath        TEXT NOT NULL UNIQUE,
+    storage_path    TEXT,                       -- clé objet Supabase Storage (mode cloud)
     file_type       TEXT,                       -- pdf, docx, image
     raw_text        TEXT,
 

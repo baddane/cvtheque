@@ -1,0 +1,26 @@
+# Secrets / environnement
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Fichiers CV (données) — ne jamais committer dans le repo
+cv_a_traiter/*
+cv_traites/*
+cv_erreurs/*
+!cv_a_traiter/.gitkeep
+!cv_traites/.gitkeep
+!cv_erreurs/.gitkeep
+logs/*.csv
+
+# Next.js / Vercel
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+web/.env*.local
+web/next-env.d.ts
