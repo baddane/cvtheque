@@ -1,7 +1,22 @@
 # CVthèque
 
-Application locale pour parser des CV (PDF, Word, images/scans) et les rendre
+Application pour parser des CV (PDF, Word, images/scans) et les rendre
 cherchables par ville, diplôme, compétences, etc.
+
+Deux modes d'utilisation :
+
+- **Local (tout-en-un)** : interface Streamlit + PostgreSQL Docker sur ton
+  poste. C'est ce que décrit ce README.
+- **En ligne (Vercel + Supabase)** : l'ingestion/OCR reste locale, mais la
+  base et l'interface de recherche sont hébergées (base Supabase + app Next.js
+  sur Vercel). Voir **[DEPLOIEMENT.md](DEPLOIEMENT.md)**.
+
+> Pourquoi pas Streamlit directement sur Vercel ? Streamlit a besoin d'un
+> serveur persistant, incompatible avec le serverless de Vercel ; l'OCR
+> (Tesseract/OpenCV/Poppler) est également trop lourd pour ce runtime. On garde
+> donc l'ingestion en local et on réécrit *uniquement l'interface de recherche*
+> en Next.js pour Vercel — la logique PostgreSQL (recherche full-text + floue)
+> est conservée à l'identique sur Supabase.
 
 ## 1. Prérequis système (à installer une seule fois)
 

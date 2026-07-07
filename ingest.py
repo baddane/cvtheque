@@ -23,6 +23,7 @@ from tqdm import tqdm
 from config import CONFIG
 from db import get_connection, inserer_cv
 from parser import parser_cv
+from storage import uploader_fichier, storage_active
 from extractors.pdf_extractor import extract_text_from_pdf
 from extractors.docx_extractor import extract_text_from_docx
 from extractors.image_extractor import extract_text_from_image
@@ -89,9 +90,20 @@ def traiter_fichier(conn, filepath: str) -> str:
 
     champs = parser_cv(texte, filename)
 
+    # Upload optionnel du fichier vers Supabase Storage (si configuré).
+    storage_path = None
+    if storage_active():
+        try:
+            storage_path = uploader_fichier(filepath, filename)
+        except Exception as e:
+            ajouter_log(filename, "erreur", f"upload storage: {e}")
+            shutil.move(filepath, os.path.join(CONFIG["DOSSIER_ERREURS"], filename))
+            return "erreur"
+
     data = {
         "filename": filename,
         "filepath": filepath,  # chemin d'origine gardé comme identifiant unique
+        "storage_path": storage_path,
         "file_type": file_type,
         "raw_text": texte,
         "statut_parsing": statut_parsing,
