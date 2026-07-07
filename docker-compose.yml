@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: cvtheque_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cvtheque
+      POSTGRES_USER: cvtheque
+      POSTGRES_PASSWORD: cvtheque_pwd_change_moi
+    ports:
+      - "5432:5432"
+    volumes:
+      - cvtheque_pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+volumes:
+  cvtheque_pgdata:
