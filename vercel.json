@@ -1,8 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "web/package.json", "use": "@vercel/next" }
-  ],
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
   "build": {
     "env": {
       "NEXT_PUBLIC_SUPABASE_URL": "https://tqrhxhoqqktnhttzmoqt.supabase.co",

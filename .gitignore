@@ -17,10 +17,10 @@ cv_erreurs/*
 !cv_erreurs/.gitkeep
 logs/*.csv
 
-# Next.js / Vercel
-web/node_modules/
-web/.next/
-web/out/
-web/.vercel/
-web/.env*.local
-web/next-env.d.ts
+# Next.js / Vercel (app à la racine)
+node_modules/
+.next/
+out/
+.vercel/
+.env*.local
+next-env.d.ts
