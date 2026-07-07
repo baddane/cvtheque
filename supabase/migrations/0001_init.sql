@@ -44,7 +44,9 @@ create index if not exists idx_cvs_diplomes      on public.cvs using gin (diplom
 -- Fonction + trigger pour maintenir le search_vector à jour automatiquement.
 -- unaccent() n'étant pas IMMUTABLE, on référence explicitement le schéma
 -- extensions pour rester compatible avec le search_path restreint des triggers.
-create or replace function public.cvs_update_search_vector() returns trigger as $$
+create or replace function public.cvs_update_search_vector() returns trigger
+set search_path = public, extensions
+as $$
 begin
     new.search_vector :=
         setweight(to_tsvector('french', unaccent(coalesce(new.nom_prenom, ''))), 'A') ||
